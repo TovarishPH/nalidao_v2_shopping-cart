@@ -5,7 +5,6 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.nalidao.v2.shoppingcart.domain.ShoppingCart;
-import com.nalidao.v2.shoppingcart.domain.dto.FormCreationShoppingCartDto;
+import com.nalidao.v2.shoppingcart.consumer.ProductConsumer;
+import com.nalidao.v2.shoppingcart.domain.ShoppingCartProduct;
+import com.nalidao.v2.shoppingcart.domain.dto.FormShoppingCartDto;
 import com.nalidao.v2.shoppingcart.domain.dto.ShoppingCartDto;
 import com.nalidao.v2.shoppingcart.service.ShoppingCartService;
-import com.nalidao.v2.shoppingcart.utils.ConvertFormCreationShoppingCartDtoToEntity;
 
 @RestController
 @RequestMapping("/shopping-cart")
@@ -31,7 +30,12 @@ public class ShoppingCartController {
 	private ShoppingCartService service;
 	
 	@Autowired
-	private ConvertFormCreationShoppingCartDtoToEntity convertFormCreationShoppingCartDtoToEntity;
+	private ProductConsumer consumer;
+	
+	@GetMapping("/product/{id}")
+	public ShoppingCartProduct getProduct(@PathVariable long id) {
+		return this.consumer.getProduct(id);
+	}
 	
 	@GetMapping
 	public List<ShoppingCartDto> getShoppingCartList() {
@@ -51,7 +55,7 @@ public class ShoppingCartController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> createShoppingCart(@RequestBody FormCreationShoppingCartDto formDto, UriComponentsBuilder builder) {
+	public ResponseEntity<?> createShoppingCart(@RequestBody FormShoppingCartDto formDto, UriComponentsBuilder builder) {
 		ShoppingCartDto scDto = this.service.createShoppingCart(formDto);
 		URI uri = builder.path("shopping-cart/user/{userId}").buildAndExpand(scDto.getUserId()).toUri();
 		return ResponseEntity.created(uri).body(scDto);
@@ -64,8 +68,8 @@ public class ShoppingCartController {
 	}
 	
 	@PutMapping
-	public ResponseEntity<ShoppingCartDto> updateShoppingCartContent(@RequestBody FormCreationShoppingCartDto formUpdate) {
-		this.service.updateShoppingCartContent(formUpdate);
+	public ResponseEntity<ShoppingCartDto> updateShoppingCartContent(@RequestBody FormShoppingCartDto formUpdate) {
+//		this.service.updateShoppingCartContent(formUpdate);
 		return null;
 	}
 }
