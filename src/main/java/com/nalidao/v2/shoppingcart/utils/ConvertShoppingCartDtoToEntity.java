@@ -1,5 +1,7 @@
 package com.nalidao.v2.shoppingcart.utils;
 
+import java.util.ArrayList;
+
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,7 @@ public class ConvertShoppingCartDtoToEntity implements Converter<ShoppingCartDto
 	@Override
 	public ShoppingCart convert(ShoppingCartDto source) {
 		ShoppingCart sc = new ShoppingCart();
+		sc.setProductList(new ArrayList<ShoppingCartProduct>());
 		sc.setId(source.getId());
 		sc.setUserId(source.getUserId());
 		source.getProductDtoList().forEach(p -> {

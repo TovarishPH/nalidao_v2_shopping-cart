@@ -1,5 +1,8 @@
 package com.nalidao.v2.shoppingcart.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +20,7 @@ public class ConvertShoppingCartToDto implements Converter<ShoppingCart, Shoppin
 	@Override
 	public ShoppingCartDto convert(ShoppingCart source) {
 		ShoppingCartDto scDto = new ShoppingCartDto();
+		scDto.setProductDtoList(new ArrayList<ShoppingCartProductDto>());
 		scDto.setId(source.getId());
 		scDto.setUserId(source.getUserId());
 		source.getProductList().forEach(p -> {
@@ -31,6 +35,18 @@ public class ConvertShoppingCartToDto implements Converter<ShoppingCart, Shoppin
 		scDto.setUpdateDate(source.getUpdateDate());
 		scDto.setTotalPrice(source.getTotalPrice());
 		return scDto;
+	}
+
+	public List<ShoppingCartDto> convertList(List<ShoppingCart> sourceList) {
+		List<ShoppingCartDto> dtoList = new ArrayList<ShoppingCartDto>();
+		
+		sourceList.forEach(s -> {
+			ShoppingCartDto dto = new ShoppingCartDto();
+			dto = this.convert(s);
+			dtoList.add(dto);
+		});
+		
+		return dtoList;
 	}
 
 }

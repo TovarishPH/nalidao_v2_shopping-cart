@@ -1,6 +1,8 @@
 package com.nalidao.v2.shoppingcart.gateway;
 
+import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,18 @@ public class ShoppingCartGateway {
 
 	public ShoppingCart save(ShoppingCart shoppingCart) {
 		return this.repository.save(shoppingCart);
+	}
+
+	public Optional<ShoppingCart> findById(BigInteger id) {
+		return this.repository.findById(id);
+	}
+
+	public Optional<ShoppingCart> finByUserId(BigInteger userId) {
+		return this.repository.findByUserId(userId);
+	}
+
+	public void deleteShoppingCart(ShoppingCart shoppingCart) {
+		this.repository.delete(shoppingCart);
 	}
 
 }
