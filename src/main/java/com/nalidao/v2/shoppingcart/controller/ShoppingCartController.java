@@ -69,7 +69,7 @@ public class ShoppingCartController {
 	
 	@PutMapping
 	public ResponseEntity<ShoppingCartDto> updateShoppingCartContent(@RequestBody FormShoppingCartDto formUpdate) {
-//		this.service.updateShoppingCartContent(formUpdate);
-		return null;
+		ShoppingCartDto shoppingCartDto = this.service.updateShoppingCartContent(formUpdate);
+		return ResponseEntity.ok(shoppingCartDto);
 	}
 }

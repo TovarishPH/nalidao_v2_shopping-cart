@@ -15,10 +15,9 @@ import com.nalidao.v2.shoppingcart.domain.ShoppingCart;
 import com.nalidao.v2.shoppingcart.domain.ShoppingCartProduct;
 import com.nalidao.v2.shoppingcart.domain.dto.FormShoppingCartDto;
 import com.nalidao.v2.shoppingcart.domain.dto.ShoppingCartDto;
-import com.nalidao.v2.shoppingcart.errorhandling.exception.ProductNotFoundException;
+import com.nalidao.v2.shoppingcart.errorhandling.exception.ShoppingCartNotFoundException;
 import com.nalidao.v2.shoppingcart.gateway.ShoppingCartGateway;
 import com.nalidao.v2.shoppingcart.utils.CalculateTotalPrice;
-import com.nalidao.v2.shoppingcart.utils.ConvertFormCreationShoppingCartDtoToEntity;
 import com.nalidao.v2.shoppingcart.utils.ConvertShoppingCartDtoToEntity;
 import com.nalidao.v2.shoppingcart.utils.ConvertShoppingCartProductDtoToEntity;
 import com.nalidao.v2.shoppingcart.utils.ConvertShoppingCartToDto;
@@ -40,13 +39,6 @@ public class ShoppingCartService {
 	@Autowired
 	private ConvertShoppingCartToDto convertShoppingCartToDto;
 
-	@Autowired
-	private ConvertShoppingCartDtoToEntity convertShoppingCartDtoToEntity;
-	
-	@Autowired
-	private ConvertShoppingCartProductDtoToEntity convertProdcutDtoToEntity;
-	
-
 	public List<ShoppingCartDto> findAll() {
 		return this.convertShoppingCartToDto.convertList(this.gateway.findAll());
 	}
@@ -55,10 +47,8 @@ public class ShoppingCartService {
 		Optional<ShoppingCart> shoppingCart = this.gateway.findById(id);
 		if (shoppingCart.isPresent()) {
 			return this.convertShoppingCartToDto.convert(shoppingCart.get());
-		} else {
-			System.out.println("Deu ruim. Tratar a Exception.");
-		}
-		return null;
+		} 
+		throw new ShoppingCartNotFoundException("Carrinho com id " + id + " não encontrado.");
 		
 	}
 	
@@ -66,10 +56,8 @@ public class ShoppingCartService {
 		Optional<ShoppingCart> shoppingCart = this.gateway.finByUserId(userId);
 		if (shoppingCart.isPresent()) {
 			return this.convertShoppingCartToDto.convert(shoppingCart.get());
-		} else {
-			System.out.println("Deu ruim. Tratar a Exception.");
 		}
-		return null;
+		throw new ShoppingCartNotFoundException("Carrinho do usuário id " + userId + " não encontrado.");
 	}
 
 	public ShoppingCartDto createShoppingCart(FormShoppingCartDto formDto) {
@@ -88,34 +76,60 @@ public class ShoppingCartService {
 		Optional<ShoppingCart> shoppinhCart = this.gateway.finByUserId(userId);
 		if(shoppinhCart.isPresent()) {
 			this.gateway.deleteShoppingCart(shoppinhCart.get());
-		} else {
-			System.out.println("Carrinho não foi encontrado!");
 		}
+		throw new ShoppingCartNotFoundException("Não foi possível deletar o carrinho pois o usuário id " + userId + " não encontrado.");
 		
 	}
 
-//	public ShoppingCartDto updateShoppingCartContent(FormCreationShoppingCartDto formUpdate) {
-//		Optional<ShoppingCart> shoppingCart = this.gateway.finByUserId(formUpdate.getUserId());
-//		//ShoppingCartEncontrado na base de dados
-//		if(shoppingCart.isPresent()) {
-//			//atualiza data de update
-//			shoppingCart.get().setUpdateDate(LocalDateTime.now());
-//			//Convertendo lista para mesmo tipo de objeto, para comparação
-//			List<ShoppingCartProduct> prodUpdateList = this.convertProdcutDtoToEntity.convertList(formUpdate.getProductDtoList());
-//			prodUpdateList.forEach(pu -> {
-//				if (shoppingCart.get().getProductList().stream().filter(p -> p.equals(pu)).findFirst().isPresent()) {
-//					//pega o produto com mesmo id e atualiza
-//				} else {
-//					//adiciona um produto ao carrinho
-//				}
-//			});
-//			
-//		} else {
-//			System.out.println("Deu ruim na hora de achar o shoppingCart.");
-//		}
-//		return null;
-//	}
-	
+	public ShoppingCartDto updateShoppingCartContent(FormShoppingCartDto formUpdate) {
+		Optional<ShoppingCart> sc = this.gateway.finByUserId(formUpdate.getUserId());
+		if(sc.isPresent()) {
+			Optional<ShoppingCartProduct> prod = sc.get().getProductList().stream().filter(p -> p.getId() == formUpdate.getProductId()).findFirst();
+			if(prod.isPresent()) {
+				this.handleExistingProduct(formUpdate, sc, prod);
+			} else {
+				this.addingNotExistingProduct(formUpdate, sc);
+			}
+			
+			sc.get().setTotalPrice(this.calculateTotalPrice.calculateProductLisTotalPrice(sc.get().getProductList()));
+			sc.get().setUpdateDate(LocalDateTime.now());
+			
+			return this.convertShoppingCartToDto.convert(this.gateway.save(sc.get()));
+		}
+		
+		throw new ShoppingCartNotFoundException("Update cancelado. Carrinho de compras do usuário id " + formUpdate.getUserId() + " não encontrado");
+	}
+
+	/**
+	 * Trata da alteração de um produto previamente existente no carrinho
+	 * @param formUpdate
+	 * @param sc
+	 * @param prod
+	 */
+	private void handleExistingProduct(FormShoppingCartDto formUpdate, Optional<ShoppingCart> sc,
+			Optional<ShoppingCartProduct> prod) {
+		if(formUpdate.getProductAmmount() == 0) {
+			sc.get().getProductList().remove(prod.get());
+		} else {
+			sc.get().getProductList().forEach(p -> {
+				if(p.getId() == formUpdate.getProductId()) {
+					p.setProdAmmount(formUpdate.getProductAmmount());
+				}
+			});
+		}
+	}
+
+	/**
+	 * Trata da adição de um produto que não existe préviamente no carrinho
+	 * @param formUpdate
+	 * @param sc
+	 */
+	private void addingNotExistingProduct(FormShoppingCartDto formUpdate, Optional<ShoppingCart> sc) {
+		ShoppingCartProduct prod = this.productConsumer.getProduct(formUpdate.getProductId());
+		prod.setProdAmmount(formUpdate.getProductAmmount());
+		sc.get().getProductList().add(prod);
+	}
+
 	/**
 	 * Valida se o produto existe e retorna o objeto para adição na lista
 	 * @param formDto

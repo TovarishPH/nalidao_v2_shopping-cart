@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.nalidao.v2.shoppingcart.errorhandling.exception.ProductNotFoundException;
+import com.nalidao.v2.shoppingcart.errorhandling.exception.ShoppingCartNotFoundException;
 import com.nalidao.v2.shoppingcart.errorhandling.utils.ApiErrorDetails;
 
 @ControllerAdvice
@@ -20,6 +21,17 @@ public class ApiErrorHandling {
 														e.getLocalizedMessage(), 
 														e.getClass().getPackage().toString(), 
 														LocalDateTime.now());
+		return new ResponseEntity<ApiErrorDetails>(details, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(ShoppingCartNotFoundException.class)
+	public ResponseEntity<ApiErrorDetails> handleShoppingCartNotFoundException(ShoppingCartNotFoundException e) {
+		ApiErrorDetails details = new ApiErrorDetails("ShoppingCartNotFound", 
+														HttpStatus.NOT_FOUND.toString(), 
+														e.getLocalizedMessage(), 
+														e.getClass().getPackage().toString(), 
+														LocalDateTime.now());
+		
 		return new ResponseEntity<ApiErrorDetails>(details, HttpStatus.NOT_FOUND);
 	}
 }
