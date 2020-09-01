@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -55,7 +57,7 @@ public class ShoppingCartController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> createShoppingCart(@RequestBody FormShoppingCartDto formDto, UriComponentsBuilder builder) {
+	public ResponseEntity<?> createShoppingCart(@RequestBody @Valid FormShoppingCartDto formDto, UriComponentsBuilder builder) {
 		ShoppingCartDto scDto = this.service.createShoppingCart(formDto);
 		URI uri = builder.path("shopping-cart/user/{userId}").buildAndExpand(scDto.getUserId()).toUri();
 		return ResponseEntity.created(uri).body(scDto);
@@ -68,7 +70,7 @@ public class ShoppingCartController {
 	}
 	
 	@PutMapping
-	public ResponseEntity<ShoppingCartDto> updateShoppingCartContent(@RequestBody FormShoppingCartDto formUpdate) {
+	public ResponseEntity<ShoppingCartDto> updateShoppingCartContent(@RequestBody @Valid FormShoppingCartDto formUpdate) {
 		ShoppingCartDto shoppingCartDto = this.service.updateShoppingCartContent(formUpdate);
 		return ResponseEntity.ok(shoppingCartDto);
 	}

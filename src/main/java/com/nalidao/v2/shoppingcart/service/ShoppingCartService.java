@@ -18,8 +18,6 @@ import com.nalidao.v2.shoppingcart.domain.dto.ShoppingCartDto;
 import com.nalidao.v2.shoppingcart.errorhandling.exception.ShoppingCartNotFoundException;
 import com.nalidao.v2.shoppingcart.gateway.ShoppingCartGateway;
 import com.nalidao.v2.shoppingcart.utils.CalculateTotalPrice;
-import com.nalidao.v2.shoppingcart.utils.ConvertShoppingCartDtoToEntity;
-import com.nalidao.v2.shoppingcart.utils.ConvertShoppingCartProductDtoToEntity;
 import com.nalidao.v2.shoppingcart.utils.ConvertShoppingCartToDto;
 
 @Service
