@@ -28,7 +28,7 @@ public class ShoppingCartGateway {
 		return this.repository.findById(id);
 	}
 
-	public Optional<ShoppingCart> finByUserId(BigInteger userId) {
+	public Optional<ShoppingCart> findByUserId(BigInteger userId) {
 		return this.repository.findByUserId(userId);
 	}
 

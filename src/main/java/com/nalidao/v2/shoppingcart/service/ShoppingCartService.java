@@ -51,7 +51,7 @@ public class ShoppingCartService {
 	}
 	
 	public ShoppingCartDto getShoppingCartByUserId(BigInteger userId) {
-		Optional<ShoppingCart> shoppingCart = this.gateway.finByUserId(userId);
+		Optional<ShoppingCart> shoppingCart = this.gateway.findByUserId(userId);
 		if (shoppingCart.isPresent()) {
 			return this.convertShoppingCartToDto.convert(shoppingCart.get());
 		}
@@ -71,7 +71,7 @@ public class ShoppingCartService {
 	}
 	
 	public void deleteShoppingCart(BigInteger userId) {
-		Optional<ShoppingCart> shoppinhCart = this.gateway.finByUserId(userId);
+		Optional<ShoppingCart> shoppinhCart = this.gateway.findByUserId(userId);
 		if(shoppinhCart.isPresent()) {
 			this.gateway.deleteShoppingCart(shoppinhCart.get());
 		}
@@ -80,7 +80,7 @@ public class ShoppingCartService {
 	}
 
 	public ShoppingCartDto updateShoppingCartContent(FormShoppingCartDto formUpdate) {
-		Optional<ShoppingCart> sc = this.gateway.finByUserId(formUpdate.getUserId());
+		Optional<ShoppingCart> sc = this.gateway.findByUserId(formUpdate.getUserId());
 		if(sc.isPresent()) {
 			Optional<ShoppingCartProduct> prod = sc.get().getProductList().stream().filter(p -> p.getId() == formUpdate.getProductId()).findFirst();
 			if(prod.isPresent()) {
