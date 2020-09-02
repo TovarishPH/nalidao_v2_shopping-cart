@@ -71,11 +71,12 @@ public class ShoppingCartService {
 	}
 	
 	public void deleteShoppingCart(BigInteger userId) {
-		Optional<ShoppingCart> shoppinhCart = this.gateway.findByUserId(userId);
-		if(shoppinhCart.isPresent()) {
-			this.gateway.deleteShoppingCart(shoppinhCart.get());
+		Optional<ShoppingCart> shoppingCart = this.gateway.findByUserId(userId);
+		if(shoppingCart.isPresent()) {
+			this.gateway.deleteShoppingCart(shoppingCart.get());
+		} else {
+			throw new ShoppingCartNotFoundException("Não foi possível deletar o carrinho pois o usuário id " + userId + " não encontrado.");
 		}
-		throw new ShoppingCartNotFoundException("Não foi possível deletar o carrinho pois o usuário id " + userId + " não encontrado.");
 		
 	}
 
