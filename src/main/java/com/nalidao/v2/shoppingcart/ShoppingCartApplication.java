@@ -1,7 +1,6 @@
 package com.nalidao.v2.shoppingcart;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -11,7 +10,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.nalidao.v2.shoppingcart.domain.dto.FormShoppingCartDto;
-import com.nalidao.v2.shoppingcart.domain.dto.ShoppingCartProductDto;
 import com.nalidao.v2.shoppingcart.service.ShoppingCartService;
 
 @SpringBootApplication
@@ -20,7 +18,7 @@ public class ShoppingCartApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ShoppingCartApplication.class, args);
 	}
-
+	
 	private static final Logger LOG = Logger.getLogger(ShoppingCartApplication.class.getName());
 	
 	@Autowired

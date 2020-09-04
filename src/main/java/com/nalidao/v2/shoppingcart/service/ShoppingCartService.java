@@ -96,12 +96,13 @@ public class ShoppingCartService {
 			}
 			
 			sc.get().setTotalPrice(this.calculateTotalPrice.calculateProductLisTotalPrice(sc.get().getProductList()));
-			sc.get().setUpdateDate(LocalDateTime.now());
+			sc.get().setUpdateDate(LocalDateTime.now(this.clock));
 			
 			return this.convertShoppingCartToDto.convert(this.gateway.save(sc.get()));
+		} else {
+			throw new ShoppingCartNotFoundException("Update cancelado. Carrinho de compras do usuário id " + formUpdate.getUserId() + " não encontrado");
 		}
 		
-		throw new ShoppingCartNotFoundException("Update cancelado. Carrinho de compras do usuário id " + formUpdate.getUserId() + " não encontrado");
 	}
 
 	/**
