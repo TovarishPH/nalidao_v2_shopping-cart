@@ -1,6 +1,7 @@
 package com.nalidao.v2.shoppingcart.service;
 
 import java.math.BigInteger;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import com.nalidao.v2.shoppingcart.consumer.ProductConsumer;
@@ -36,6 +38,9 @@ public class ShoppingCartService {
 	
 	@Autowired
 	private ConvertShoppingCartToDto convertShoppingCartToDto;
+	
+	@Autowired
+	private Clock clock;
 
 	public List<ShoppingCartDto> findAll() {
 		return this.convertShoppingCartToDto.convertList(this.gateway.findAll());
@@ -63,8 +68,8 @@ public class ShoppingCartService {
 		shoppingCart.setUserId(formDto.getUserId());
 		shoppingCart.setProductList(new ArrayList<ShoppingCartProduct>());
 		shoppingCart.getProductList().add(this.validateProductForShoppingCartCreation(formDto));
-		shoppingCart.setCreationDate(LocalDateTime.now());
-		shoppingCart.setUpdateDate(LocalDateTime.now());
+		shoppingCart.setCreationDate(LocalDateTime.now(this.clock));
+		shoppingCart.setUpdateDate(LocalDateTime.now(this.clock));
 		shoppingCart.setTotalPrice(this.calculateTotalPrice.calculateProductLisTotalPrice(shoppingCart.getProductList()));
 		
 		return this.convertShoppingCartToDto.convert(this.gateway.save(shoppingCart));
