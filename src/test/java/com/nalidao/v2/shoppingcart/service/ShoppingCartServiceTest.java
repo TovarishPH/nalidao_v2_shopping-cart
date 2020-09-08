@@ -22,6 +22,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import com.nalidao.v2.shoppingcart.consumer.ProductConsumer;
 import com.nalidao.v2.shoppingcart.domain.ShoppingCart;
@@ -36,6 +38,7 @@ import com.nalidao.v2.shoppingcart.utils.ConvertShoppingCartToDto;
 import com.nalidao.v2.shoppingcart.utils.TestUtils;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ShoppingCartServiceTest {
 	
 	private final static LocalDate LOCAL_DATE = LocalDate.of(2020, 9, 3);
@@ -166,17 +169,6 @@ public class ShoppingCartServiceTest {
 		
 	}
 	
-//	@Test
-//	public void testCreateShoppingCartThrowProductNotFoundException() {
-//		FormShoppingCartDto formDto = new FormShoppingCartDto();
-//		
-//		Throwable thrown = ThrowableAssert.catchThrowable(() -> {
-//			this.consumer.getProduct(formDto.getProductId());
-//		});
-//		
-//		assertThat(thrown).isInstanceOf(ProductNotFoundException.class).hasMessage("ProductApi não encontrou o produto de id " + formDto.getProductId());
-//	}
-	
 	@Test
 	public void testDeleteShoppingCartReturnsOk() {
 		BigInteger userId = BigInteger.valueOf(100);
@@ -190,7 +182,7 @@ public class ShoppingCartServiceTest {
 	}
 	
 	@Test
-	public void testDeleteShoppingCartThrowNotFoundException() {
+	public void testDeleteShoppingCartThrowsShoppingCartNotFoundException() {
 		BigInteger userId = BigInteger.valueOf(100);
 		
 		Throwable thrown = ThrowableAssert.catchThrowable(() -> {
@@ -202,7 +194,7 @@ public class ShoppingCartServiceTest {
 	}
 	
 	@Test
-	public void testUpdateShoppingCartWhenExistingProdcutReturnsOk() {
+	public void testUpdateShoppingCartWhenExistingProdcutAddingReturnsOk() {
 		FormShoppingCartDto formUpdate = this.utils.getFormShoppingCartDto();
 		ShoppingCart scToUpdate = this.utils.getShoppingCartMock();
 		ShoppingCartDto scToUpdateDto = this.utils.getShoppingCartDtoMock();
@@ -218,24 +210,53 @@ public class ShoppingCartServiceTest {
 		
 	}
 	
-	//Não terminado
-//	@Test
-//	public void testUpdateShoppingCartWhenNonExistingProdcutReturnsOk() {
-//		FormShoppingCartDto formUpdate = this.utils.getFormShoppingCartDto();
-//		formUpdate.setProductId(400);
-//		ShoppingCart scToUpdate = this.utils.getShoppingCartMock();
-//		scToUpdate.setProductList(new ArrayList<ShoppingCartProduct>());
-//		ShoppingCartDto scToUpdateDto = this.utils.getShoppingCartDtoMock();
-//		
-//		when(this.gateway.findByUserId(formUpdate.getUserId())).thenReturn(Optional.of(scToUpdate));
-//		when(this.gateway.save(scToUpdate)).thenReturn(scToUpdate);
-//		when(this.convertShoppingCartToDto.convert(scToUpdate)).thenReturn(scToUpdateDto);
-//		
-//		ShoppingCartDto expected = this.service.updateShoppingCartContent(formUpdate);
-//		
-//		assertThat(expected).isNotNull();
-//		assertThat(expected.getProductDtoList()).anyMatch(p -> p.getId() == formUpdate.getProductId());
-//		assertThat(expected.getProductDtoList().size()).isGreaterThan(scToUpdate.getProductList().size());
-//		
-//	}
+	@Test
+	public void testUpdateShoppingCartWhenExistingProdcutRemovingReturnsOk() {
+		FormShoppingCartDto formUpdate = this.utils.getFormShoppingCartDto();
+		formUpdate.setProductAmmount(0);
+		ShoppingCart scToUpdate = this.utils.getShoppingCartMock();
+		ShoppingCartDto scToUpdateDto = this.utils.getShoppingCartDtoMock();
+		
+		when(this.gateway.findByUserId(formUpdate.getUserId())).thenReturn(Optional.of(scToUpdate));
+		when(this.gateway.save(scToUpdate)).thenReturn(scToUpdate);
+		when(this.convertShoppingCartToDto.convert(scToUpdate)).thenReturn(scToUpdateDto);
+		
+		ShoppingCartDto expected = this.service.updateShoppingCartContent(formUpdate);
+		
+		assertThat(expected).isNotNull();
+		assertThat(expected.getProductDtoList()).anyMatch(p -> p.getId() == formUpdate.getProductId());
+	}
+	
+	@Test
+	public void testUpdateShoppingCartWhenNonExistingProdcutReturnsOk() {
+		FormShoppingCartDto formUpdate = this.utils.getFormShoppingCartDto();
+		ShoppingCart scToUpdate = this.utils.getShoppingCartMock();
+		scToUpdate.setProductList(new ArrayList<ShoppingCartProduct>());
+		ShoppingCartDto scToUpdateDto = this.utils.getShoppingCartDtoMock();
+		ShoppingCartProduct prod = this.utils.getProduct();
+		
+		when(this.gateway.findByUserId(formUpdate.getUserId())).thenReturn(Optional.of(scToUpdate));
+		when(this.consumer.getProduct(formUpdate.getProductId())).thenReturn(prod);
+		when(this.gateway.save(scToUpdate)).thenReturn(scToUpdate);
+		when(this.convertShoppingCartToDto.convert(scToUpdate)).thenReturn(scToUpdateDto);
+		
+		ShoppingCartDto expected = this.service.updateShoppingCartContent(formUpdate);
+		
+		assertThat(expected).isNotNull();
+		assertThat(expected.getProductDtoList()).anyMatch(p -> p.getId() == formUpdate.getProductId());
+		
+	}
+	
+	@Test
+	public void testUpdateShoppingCartThowsShoppingCartNotFoundException() {
+		FormShoppingCartDto formUpdate = this.utils.getFormShoppingCartDto();
+		
+		Throwable thrown = ThrowableAssert.catchThrowable(() -> {
+			this.service.updateShoppingCartContent(formUpdate);
+		});
+		
+		assertThat(thrown).isInstanceOf(ShoppingCartNotFoundException.class)
+							.hasMessage("Update cancelado. Carrinho de compras do usuário id " + formUpdate.getUserId() + " não encontrado");
+	}
+	
 }
