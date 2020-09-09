@@ -31,14 +31,6 @@ public class ShoppingCartController {
 	@Autowired
 	private ShoppingCartService service;
 	
-	@Autowired
-	private ProductConsumer consumer;
-	
-	@GetMapping("/product/{id}")
-	public ShoppingCartProduct getProduct(@PathVariable long id) {
-		return this.consumer.getProduct(id);
-	}
-	
 	@GetMapping
 	public List<ShoppingCartDto> getShoppingCartList() {
 		return this.service.findAll();
