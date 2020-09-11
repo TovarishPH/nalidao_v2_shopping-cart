@@ -18,14 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.nalidao.v2.shoppingcart.consumer.ProductConsumer;
-import com.nalidao.v2.shoppingcart.domain.ShoppingCartProduct;
 import com.nalidao.v2.shoppingcart.domain.dto.FormShoppingCartDto;
 import com.nalidao.v2.shoppingcart.domain.dto.ShoppingCartDto;
 import com.nalidao.v2.shoppingcart.service.ShoppingCartService;
 
+import io.swagger.annotations.Api;
+
 @RestController
 @RequestMapping("/shopping-cart")
+@Api
 public class ShoppingCartController {
 
 	@Autowired

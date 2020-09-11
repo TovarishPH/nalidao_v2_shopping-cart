@@ -12,7 +12,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.nalidao.v2.shoppingcart.domain.dto.FormShoppingCartDto;
 import com.nalidao.v2.shoppingcart.service.ShoppingCartService;
 
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 @SpringBootApplication
+@EnableSwagger2
 public class ShoppingCartApplication {
 
 	public static void main(String[] args) {

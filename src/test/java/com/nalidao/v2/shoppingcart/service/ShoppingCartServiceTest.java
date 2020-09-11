@@ -30,7 +30,6 @@ import com.nalidao.v2.shoppingcart.domain.ShoppingCart;
 import com.nalidao.v2.shoppingcart.domain.ShoppingCartProduct;
 import com.nalidao.v2.shoppingcart.domain.dto.FormShoppingCartDto;
 import com.nalidao.v2.shoppingcart.domain.dto.ShoppingCartDto;
-import com.nalidao.v2.shoppingcart.errorhandling.exception.ProductNotFoundException;
 import com.nalidao.v2.shoppingcart.errorhandling.exception.ShoppingCartNotFoundException;
 import com.nalidao.v2.shoppingcart.gateway.ShoppingCartGateway;
 import com.nalidao.v2.shoppingcart.utils.CalculateTotalPrice;
