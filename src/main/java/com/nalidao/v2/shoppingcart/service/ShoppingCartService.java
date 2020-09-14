@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,8 +23,6 @@ import com.nalidao.v2.shoppingcart.utils.ConvertShoppingCartToDto;
 @Service
 public class ShoppingCartService {
 	
-	private static final Logger LOG = Logger.getLogger(ShoppingCartService.class.getName());
-
 	@Autowired
 	private ShoppingCartGateway gateway;
 	
@@ -45,7 +42,7 @@ public class ShoppingCartService {
 		return this.convertShoppingCartToDto.convertList(this.gateway.findAll());
 	}
 	
-	public ShoppingCartDto getShoppingCartById(BigInteger id) {
+	public ShoppingCartDto getShoppingCartById(final BigInteger id) {
 		Optional<ShoppingCart> shoppingCart = this.gateway.findById(id);
 		if (shoppingCart.isPresent()) {
 			return this.convertShoppingCartToDto.convert(shoppingCart.get());
@@ -54,7 +51,7 @@ public class ShoppingCartService {
 		
 	}
 	
-	public ShoppingCartDto getShoppingCartByUserId(BigInteger userId) {
+	public ShoppingCartDto getShoppingCartByUserId(final BigInteger userId) {
 		Optional<ShoppingCart> shoppingCart = this.gateway.findByUserId(userId);
 		if (shoppingCart.isPresent()) {
 			return this.convertShoppingCartToDto.convert(shoppingCart.get());
@@ -62,7 +59,7 @@ public class ShoppingCartService {
 		throw new ShoppingCartNotFoundException("Carrinho do usuário id " + userId + " não encontrado.");
 	}
 
-	public ShoppingCartDto createShoppingCart(FormShoppingCartDto formDto) {
+	public ShoppingCartDto createShoppingCart(final FormShoppingCartDto formDto) {
 		ShoppingCart shoppingCart = new ShoppingCart();
 		shoppingCart.setUserId(formDto.getUserId());
 		shoppingCart.setProductList(new ArrayList<ShoppingCartProduct>());
@@ -74,7 +71,7 @@ public class ShoppingCartService {
 		return this.convertShoppingCartToDto.convert(this.gateway.save(shoppingCart));
 	}
 	
-	public void deleteShoppingCart(BigInteger userId) {
+	public void deleteShoppingCart(final BigInteger userId) {
 		Optional<ShoppingCart> shoppingCart = this.gateway.findByUserId(userId);
 		if(shoppingCart.isPresent()) {
 			this.gateway.deleteShoppingCart(shoppingCart.get());
@@ -84,7 +81,7 @@ public class ShoppingCartService {
 		
 	}
 
-	public ShoppingCartDto updateShoppingCartContent(FormShoppingCartDto formUpdate) {
+	public ShoppingCartDto updateShoppingCartContent(final FormShoppingCartDto formUpdate) {
 		Optional<ShoppingCart> sc = this.gateway.findByUserId(formUpdate.getUserId());
 		if(sc.isPresent()) {
 			Optional<ShoppingCartProduct> prod = sc.get().getProductList().stream().filter(p -> p.getId() == formUpdate.getProductId()).findFirst();

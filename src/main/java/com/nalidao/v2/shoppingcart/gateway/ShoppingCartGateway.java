@@ -20,19 +20,19 @@ public class ShoppingCartGateway {
 		return this.repository.findAll();
 	}
 
-	public ShoppingCart save(ShoppingCart shoppingCart) {
-		return this.repository.save(shoppingCart);
-	}
-
-	public Optional<ShoppingCart> findById(BigInteger id) {
+	public Optional<ShoppingCart> findById(final BigInteger id) {
 		return this.repository.findById(id);
 	}
 
-	public Optional<ShoppingCart> findByUserId(BigInteger userId) {
+	public Optional<ShoppingCart> findByUserId(final BigInteger userId) {
 		return this.repository.findByUserId(userId);
 	}
+	
+	public ShoppingCart save(final ShoppingCart shoppingCart) {
+		return this.repository.save(shoppingCart);
+	}
 
-	public void deleteShoppingCart(ShoppingCart shoppingCart) {
+	public void deleteShoppingCart(final ShoppingCart shoppingCart) {
 		this.repository.delete(shoppingCart);
 	}
 

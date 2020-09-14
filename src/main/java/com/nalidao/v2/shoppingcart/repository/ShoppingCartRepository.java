@@ -11,6 +11,6 @@ import com.nalidao.v2.shoppingcart.domain.ShoppingCart;
 @Repository
 public interface ShoppingCartRepository extends MongoRepository<ShoppingCart, BigInteger> {
 
-	Optional<ShoppingCart> findByUserId(BigInteger userId);
+	Optional<ShoppingCart> findByUserId(final BigInteger userId);
 
 }
