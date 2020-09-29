@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import com.nalidao.v2.shoppingcart.domain.dto.FormShoppingCartDto;
 import com.nalidao.v2.shoppingcart.service.ShoppingCartService;
@@ -16,6 +17,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSwagger2
+@EnableFeignClients
 public class ShoppingCartApplication {
 
 	public static void main(String[] args) {

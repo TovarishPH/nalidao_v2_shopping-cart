@@ -18,8 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.nalidao.v2.shoppingcart.consumer.ProductConsumer;
+import com.nalidao.v2.shoppingcart.domain.ShoppingCartProduct;
 import com.nalidao.v2.shoppingcart.domain.dto.FormShoppingCartDto;
 import com.nalidao.v2.shoppingcart.domain.dto.ShoppingCartDto;
+import com.nalidao.v2.shoppingcart.gateway.ProductGateway;
 import com.nalidao.v2.shoppingcart.service.ShoppingCartService;
 
 import io.swagger.annotations.Api;
@@ -32,6 +35,21 @@ public class ShoppingCartController {
 
 	@Autowired
 	private ShoppingCartService service;
+	
+	@Autowired
+	private ProductConsumer productConsumer;
+	
+	@Autowired
+	private ProductGateway productgateway;
+	
+	/**
+	 * Apenas para teste
+	 */
+	@GetMapping("/product/{id}")
+	public ShoppingCartProduct getProduct(@PathVariable long id) {
+//		return this.productConsumer.getProduct(id);
+		return this.productgateway.getProduct(id);
+	}
 	
 	@GetMapping
 	@ApiOperation(value = "Lista todos os carrinhos de compras criados pela API")

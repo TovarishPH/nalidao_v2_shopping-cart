@@ -16,6 +16,8 @@ import com.nalidao.v2.shoppingcart.errorhandling.exception.ShoppingCartNotFoundE
 import com.nalidao.v2.shoppingcart.errorhandling.utils.ApiErrorDetails;
 import com.nalidao.v2.shoppingcart.errorhandling.utils.ApiFormErrorDetails;
 
+import feign.FeignException;
+
 @ControllerAdvice
 public class ApiErrorHandling {
 	
@@ -51,5 +53,15 @@ public class ApiErrorHandling {
 		});
 		
 		return new ResponseEntity<List<ApiFormErrorDetails>>(detailList, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(FeignException.class)
+	public ResponseEntity<ApiErrorDetails> handleFeignException(FeignException e) {
+		ApiErrorDetails details = new ApiErrorDetails("Client Error", 
+													HttpStatus.BAD_REQUEST.toString(), 
+													e.getLocalizedMessage(), 
+													e.getClass().getPackage().toString(), 
+													LocalDateTime.now());
+		return new ResponseEntity<ApiErrorDetails>(details, HttpStatus.BAD_REQUEST);
 	}
 }
